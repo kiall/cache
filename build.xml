@@ -1,9 +1,11 @@
 <?xml version="1.0" ?>
-<project name="kohana-cache" default="help">
+<project name="kohana-module" default="help">
 	<property environment="env"/>
 
 	<property name="basedir" value="${project.basedir}/../.."/>
 	<property name="builddir" value="${basedir}/build"/>
+
+	<property name="module" value="cache"/>
 
 	<!-- Clean up -->
 	<target name="clean">
@@ -16,13 +18,13 @@
 
 	<!-- Run unit tests and generate junit.xml and clover.xml -->
 	<target name="test-log">
-		<exec command="KOHANA_MODULES=cache phpunit --bootstrap=modules/unittest/bootstrap_modules.php --coverage-html=${builddir}/coverage --log-junit=${builddir}/logs/junit.xml --coverage-clover=${builddir}/logs/clover.xml modules/unittest/tests.php" checkreturn="true" passthru="true" dir="${basedir}"/>
+		<exec command="KOHANA_MODULES=${module} phpunit --bootstrap=modules/unittest/bootstrap_modules.php --coverage-html=${builddir}/coverage --log-junit=${builddir}/logs/junit.xml --coverage-clover=${builddir}/logs/clover.xml modules/unittest/tests.php" checkreturn="true" passthru="true" dir="${basedir}"/>
 	</target>
 
 	<!-- Run PHP Code Sniffer and generate checkstyle.xml -->
 	<target name="phpcs-log">
 		<phpcodesniffer standard="Kohana" showSniffs="true" showWarnings="true">
-			<fileset dir="${basedir}/modules/cache">
+			<fileset dir="${basedir}/modules/${module}">
 				<include name="**/*.php" />
 				<exclude name="**/vendor/**" />
 				<exclude name="**/tests/**" />
@@ -34,13 +36,13 @@
 
 	<!-- Run PHP Mess Detector and generate pmd.xml -->
 	<target name="phpmd-log">
-		<exec command="phpmd ${basedir}/modules/cache xml codesize,unusedcode --exclude=**/vendor/** --reportfile ${builddir}/logs/pmd.xml"  passthru="true"/>
+		<exec command="phpmd ${basedir}/modules/${module} xml codesize,unusedcode --exclude=**/vendor/** --reportfile ${builddir}/logs/pmd.xml"  passthru="true"/>
 	</target>
 
 	<!-- Run PHP Copy/Paste Detector and generate pmd.xml -->
 	<target name="phpcpd-log">
 		<phpcpd>
-			<fileset dir="${basedir}/modules/cache">
+			<fileset dir="${basedir}/modules/${module}">
 				<include name="**/*.php" />
 				<exclude name="**/vendor/**" />
 			</fileset>
@@ -51,7 +53,7 @@
 	<!-- Run PHP Depend and generate jdepend.xml -->
 	<target name="pdepend-log">
 		<phpdepend>
-			<fileset dir="${basedir}/modules/cache">
+			<fileset dir="${basedir}/modules/${module}">
 				<include name="**/*.php" />
 				<exclude name="**/vendor/**" />
 			</fileset>
@@ -62,7 +64,7 @@
 
 	<!-- Run PHP CodeBrowser and generate output -->
 	<target name="phpcb-log">
-		<exec command="phpcb --exclude=${builddir}/** --log=${builddir}/logs --source=${basedir} --output=${builddir}/code-browser"  passthru="true"/>
+		<exec command="phpcb --exclude=${builddir}/** --log=${builddir}/logs --source=${basedir}/modules/${module} --output=${builddir}/code-browser"  passthru="true"/>
 	</target>
 
 	<!-- Hudson CI target -->
